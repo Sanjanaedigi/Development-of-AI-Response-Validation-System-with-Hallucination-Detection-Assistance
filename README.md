@@ -5,7 +5,7 @@ This repository contains the foundation architecture, technology stack, and init
 
 ---
 
-## 🛠️ Final Consolidated Tech Stack
+## Tech Stack
 
 * **Frontend Interface:** Streamlit (For building the responsive web dashboard entirely in Python).
 * **Backend Framework:** FastAPI (To handle high-performance API routing and auto-generate Swagger/OpenAPI documentation).
@@ -19,7 +19,7 @@ This repository contains the foundation architecture, technology stack, and init
 
 ---
 
-## 📐 System Architecture & Data Flow
+## System Architecture & Data Flow
 
 Our architecture processes submissions through a sequential multi-agent validation funnel to clean, audit, and score AI responses.
 
