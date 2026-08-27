@@ -71,9 +71,4 @@ Our architecture processes submissions through a sequential multi-agent validati
 
 
 
-## 📦 Milestone 1 Breakdown & Status
 
-* **M1.1 Research:** Complete. Finalized tech stack (Gemini + ChromaDB) and mapped out evaluation metrics.
-* **M1.2 Architecture:** Complete. Defined orchestration funnel consisting of Relevance, Hallucination, and Completeness filters.
-* **M1.3 Input Module:** Initial backend input structures and data schemas created via FastAPI endpoints.
-* **M1.4 Knowledge Base:** Initialized scripts to parse Hugging Face datasets (SQuAD/TruthfulQA) into local ChromaDB storage.
