@@ -3,12 +3,6 @@ Milestone 1
 
 This repository contains the foundation architecture, technology stack, and initial module design for the Automated AI Response Evaluation Pipeline. The system leverages a RAG (Retrieval-Augmented Generation) workflow and a multi-agent validation funnel to critique AI-generated outputs for factual safety.
 
-# 🛡️ Multi-Agent RAG Evaluation & Auditing System
-
-A production-grade, automated safety framework that audits and scores AI generation pipelines through a sequential multi-agent validation funnel [M1.2].
-
----
-
 ## Problem Statement
 
 Generative AI models frequently generate text containing **hallucinations** (untrue facts), **off-topic drift** (unrelated answers), and **incomplete answers** [M1.1]. Relying on a single, expensive LLM prompt to grade these errors introduces prompt distraction and unreliable scoring. Organizations lack a lightweight, local, and structured pipeline to automatically audit AI outputs before exposing them to users.
