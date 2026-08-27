@@ -110,7 +110,7 @@ The system distributes tasks to specialized micro-agents coordinated by a centra
 ## Project Structure
 
 ```text
-llm-eval-system/
+app/
 │
 ├── app/
 │   ├── __init__.py
