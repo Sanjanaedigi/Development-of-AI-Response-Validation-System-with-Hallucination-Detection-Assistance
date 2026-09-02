@@ -1,7 +1,7 @@
 from typing import Dict, TypedDict, Any
 from langgraph.graph import StateGraph, END
 from langchain_google_genai import ChatGoogleGenerativeAI
-from app.core import prompts
+from.import prompts
 import re
 import os
 
