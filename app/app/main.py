@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, status
-from app.schemas import EvaluationSubmission, EvaluationResultResponse
-from app.knowledge_base.vector_store import LocalVectorKnowledgeBase
-from app.core.graph import compiled_funnel
+from .schemas import EvaluationSubmission, EvaluationResultResponse
+from .knowledge_base.vector_store import LocalVectorKnowledgeBase
+from .core.graph import compiled_funnel
 import uuid
 
 app = FastAPI(title="LLM Multi-Agent Funnel Auditor Engine", version="1.0.0")
