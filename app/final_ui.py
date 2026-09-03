@@ -268,39 +268,44 @@ if validate:
                         hallucination +
                         completeness
                     ) / 3
-
+                    
                     # ------------------------------------------
-                    # Verdict
+                    # Verdict from Backend Verdict Agent
                     # ------------------------------------------
-
-                    if overall >= 0.70:
-
+                    
+                    verdict = result.get(
+                        "verdict",
+                        "FILTER BLOCKED"
+                    )
+                    
+                    if verdict == "ALL FILTERS PASSED":
+                    
                         st.markdown(
                             f"""
                             <div class="verdict valid">
-                                🟢 RESPONSE VALID<br>
+                                🟢 ALL FILTERS PASSED<br>
                                 <span style="font-size:16px;">
-                                Overall Score: {overall * 100:.1f}%
+                                Safe Output | Overall Score: {overall * 100:.1f}%
                                 </span>
                             </div>
                             """,
                             unsafe_allow_html=True
                         )
-
+                    
                     else:
-
+                    
                         st.markdown(
                             f"""
                             <div class="verdict invalid">
-                                🔴 POSSIBLE HALLUCINATION<br>
+                                🔴 FILTER BLOCKED<br>
                                 <span style="font-size:16px;">
-                                Overall Score: {overall * 100:.1f}%
+                                Unsafe / Unverified Output | Overall Score: {overall * 100:.1f}%
                                 </span>
                             </div>
                             """,
                             unsafe_allow_html=True
                         )
-
+                   
                     # ------------------------------------------
                     # Score Cards
                     # ------------------------------------------
