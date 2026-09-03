@@ -14,10 +14,17 @@ class FunnelState(TypedDict):
     verdict: str
 
 def parse_judge_output(text: str):
-    score_match = re.search(r"SCORE:\s*([\d\.]+)", text)
-    reason_match = re.search(r"REASONING:\s*(.*)", text)
+    score_match = re.search(r"SCORE:\s*([\d.]+)", text, re.IGNORECASE)
+    reason_match = re.search(r"REASONING:\s*(.*)", text, re.IGNORECASE | re.DOTALL)
+
     score = float(score_match.group(1)) if score_match else 0.0
-    reason = reason_match.group(1).strip() if reason_match else "Parsed successfully."
+
+    reason = (
+        reason_match.group(1).strip()
+        if reason_match
+        else "No explanation available."
+    )
+
     return score, reason
 
 def get_gemini_engine():
