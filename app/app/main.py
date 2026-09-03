@@ -32,10 +32,14 @@ async def run_audit_evaluation(payload: EvaluationSubmission):
     output_state = compiled_funnel.invoke(graph_input)
     
     # Verdict Agent Processing Layer
+    
     scores = output_state["scores"]
-    all_passed = all(score >= 0.70 for score in scores.values())
-    verdict_flag = "🟢 ALL FILTERS PASSED" if all_passed else "🔴 FILTER BLOCK"
-
+    
+    verdict_flag = output_state.get(
+        "verdict",
+        "FILTER BLOCKED"
+    )
+    
     return {
         "submission_id": str(uuid.uuid4()),
         "status": "PROCESSED",
@@ -43,5 +47,4 @@ async def run_audit_evaluation(payload: EvaluationSubmission):
         "verdict": verdict_flag,
         "reasoning": output_state["reasoning"]
     }
-
 
