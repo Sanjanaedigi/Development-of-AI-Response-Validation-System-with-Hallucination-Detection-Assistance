@@ -91,7 +91,7 @@ The system distributes tasks to specialized micro-agents coordinated by a centra
 
 *   **Frontend Interface:** **Streamlit** (Building responsive web dashboards entirely in Python).
 *   **Backend Framework:** **FastAPI** (Handles high-performance API routing and auto-generates Swagger/OpenAPI documentation) [M1.3].
-*   **AI Core Engine:** **Gemini API** (`gemini-1.5-flash`) (Executes evaluation prompts and serves as the model for the judges) [M1.1].
+*   **AI Core Engine:** **Gemini API** (`gemini-2.5-flash`) (Executes evaluation prompts and serves as the model for the judges) [M1.1].
 *   **Orchestration Framework:** **LangChain / LangGraph** (Manages state transitions and handoffs between judge agents) [M1.2].
 *   **Architecture Pattern:** **RAG (Retrieval-Augmented Generation)** (Connects the local knowledge base to the AI judges) [M1.4].
 *   **Vector Database:** **ChromaDB** (Stores and semantically searches reference facts locally on-disk) [M1.4].
