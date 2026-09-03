@@ -120,8 +120,8 @@ app/
 │       ├── __init__.py
 │       ├── vector_store.py     # ChromaDB Database Engine Initialization
 │       └── ingest.py           # Hugging Face Dataset Downloader & Text Chunking
-│
-├── dashboard.py                # Streamlit Web Presentation Dashboard UI
+|
+├── final_ui.py                # Streamlit Web Presentation Dashboard UI
 ├── requirements.txt            # Software Package Dependencies
 └── test_pipeline.py            # Automated Unit Testing Suite (Pytest framework)
 ```
@@ -133,7 +133,7 @@ app/
 1.  **Clone the Repository Workspace:**
     ```bash
     git clone https://github.com
-    cd llm-eval-system
+    cd app
     ```
 2.  **Install Required Software Packages:**
     ```bash
@@ -170,14 +170,14 @@ python -m app.knowledge_base.ingest
 ### Step 2: Spin Up the FastAPI Web API Server Backend
 Run the backend web engine cluster gateway using Uvicorn [M1.3]:
 ```bash
-uvicorn app.main:app --reload --port 8000
+python -m uvicorn app.app.main:app --reload
 ```
 *Note: View interactive API schemas at `http://127.0.0`.*
 
 ### Step 3: Launch the Streamlit Frontend Web Dashboard Panel
 Open an independent terminal tab window session and start your frontend user interface:
 ```bash
-streamlit run dashboard.py
+streamlit run app\final_ui.py
 ```
 
 ---
