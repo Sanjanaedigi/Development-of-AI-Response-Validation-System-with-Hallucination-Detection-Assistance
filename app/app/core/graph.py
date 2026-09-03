@@ -29,7 +29,7 @@ def parse_judge_output(text: str):
 
 def get_gemini_engine():
     return ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash", 
+        model="gemini-2.5-flash", 
         google_api_key=os.getenv("GOOGLE_API_KEY", "mock_key")
     )
 
