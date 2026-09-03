@@ -11,6 +11,7 @@ class FunnelState(TypedDict):
     context: str
     scores: Dict[str, float]
     reasoning: Dict[str, str]
+    verdict: str
 
 def parse_judge_output(text: str):
     score_match = re.search(r"SCORE:\s*([\d\.]+)", text)
@@ -48,17 +49,74 @@ def completeness_filter(state: FunnelState) -> Dict[str, Any]:
     res = get_gemini_engine().invoke(p)
     score, reason = parse_judge_output(res.content)
     return {"scores": {"completeness": score}, "reasoning": {"completeness": reason}}
+    
+def verdict_agent(state: FunnelState) -> Dict[str, Any]:
+    if not os.getenv("GOOGLE_API_KEY"):
+        return {
+            "verdict": "ALL FILTERS PASSED"
+        }
+
+    prompt = f"""
+You are the final Verdict Agent in an AI Response Validation System.
+
+Your task is to determine whether the AI response is safe and acceptable
+after the following three evaluations:
+
+Question:
+{state["question"]}
+
+AI Response:
+{state["ai_response"]}
+
+Relevance Evaluation:
+Score: {state["scores"].get("relevance", 0)}
+Reasoning: {state["reasoning"].get("relevance", "")}
+
+Hallucination/Grounding Evaluation:
+Score: {state["scores"].get("hallucination", 0)}
+Reasoning: {state["reasoning"].get("hallucination", "")}
+
+Completeness Evaluation:
+Score: {state["scores"].get("completeness", 0)}
+Reasoning: {state["reasoning"].get("completeness", "")}
+
+Decide the final verdict based on the actual evaluation results and
+reasoning.
+
+If the response is relevant, adequately grounded, and sufficiently
+complete, return exactly:
+
+ALL FILTERS PASSED
+
+If there is a significant problem with relevance, hallucination/grounding,
+or completeness, return exactly:
+
+FILTER BLOCKED
+
+Return ONLY one of these two verdicts.
+"""
+
+    res = get_gemini_engine().invoke(prompt)
+
+    verdict = res.content.strip().upper()
+
+    if "ALL FILTERS PASSED" in verdict:
+        return {"verdict": "ALL FILTERS PASSED"}
+
+    return {"verdict": "FILTER BLOCKED"}    
 
 # Build sequential workflow pipeline funnel graph
 builder = StateGraph(FunnelState)
 builder.add_node("filter_1_relevance", relevance_filter)
 builder.add_node("filter_2_hallucination", hallucination_filter)
 builder.add_node("filter_3_completeness", completeness_filter)
+builder.add_node("verdict_agent", verdict_agent)
 
 builder.set_entry_point("filter_1_relevance")
 builder.add_edge("filter_1_relevance", "filter_2_hallucination")
 builder.add_edge("filter_2_hallucination", "filter_3_completeness")
-builder.add_edge("filter_3_completeness", END)
+builder.add_edge("filter_3_completeness", "verdict_agent")
+builder.add_edge("verdict_agent", END)
 
 compiled_funnel = builder.compile()
 
