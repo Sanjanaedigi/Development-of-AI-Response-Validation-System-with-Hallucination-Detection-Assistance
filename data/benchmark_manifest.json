@@ -1,0 +1,20 @@
+{
+  "benchmarks": [
+    {
+      "name": "TruthfulQA",
+      "hugging_face_id": "truthfulqa/truthful_qa",
+      "configuration": "generation",
+      "split": "validation",
+      "purpose": "Truthfulness and hallucination-oriented QA benchmark",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "SQuAD",
+      "hugging_face_id": "rajpurkar/squad",
+      "split": "train",
+      "purpose": "Reading-comprehension QA benchmark providing question, context and answer spans",
+      "license": "CC BY-SA 4.0"
+    }
+  ],
+  "policy": "Raw benchmark data is downloaded reproducibly by the ingestion script and is not committed to the repository."
+}
