@@ -22,10 +22,29 @@ def _load_index():
     payload=json.loads(KB_INDEX_FILE.read_text(encoding="utf-8"))
     return payload["records"],np.asarray(payload["embeddings"],dtype=np.float32),payload["backend"]
 
-def semantic_search(query,top_k=None):
+def semantic_search(query,top_k=None,min_similarity=0.40):
     records,matrix,backend=_load_index()
     if not records: return []
     qv=generate_embeddings([query],backend)[0]
     scores=cosine_similarity(qv,matrix)
-    order=np.argsort(scores)[::-1][:top_k or RETRIEVAL_TOP_K]
-    return [{**records[i],"similarity":round(float(scores[i]),4)} for i in order]
+    limit = top_k or RETRIEVAL_TOP_K
+    order = np.argsort(scores)[::-1]
+
+    results = []
+
+    for i in order:
+        similarity = float(scores[i])
+
+        if similarity < min_similarity:
+            continue
+
+        results.append({
+            **records[i],
+            "similarity": round(similarity, 4)
+        })
+
+        if len(results) >= limit:
+            break
+
+    return results
+    

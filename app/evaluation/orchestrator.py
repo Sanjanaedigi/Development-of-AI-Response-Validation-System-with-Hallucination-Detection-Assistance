@@ -65,7 +65,8 @@ def evaluate_submission(
         "accuracy": accuracy_agent.evaluate(
             question,
             ai_response,
-            retrieved
+            retrieved,
+            reference_answer
         ),
 
         "hallucination": hallucination_agent.evaluate(

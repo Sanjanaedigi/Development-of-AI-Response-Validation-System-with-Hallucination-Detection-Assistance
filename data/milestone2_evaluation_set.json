@@ -1,0 +1,65 @@
+[
+  {
+    "id": "M2-001",
+    "dataset": "SQuAD",
+    "category": "correct",
+    "question": "What is the capital of France?",
+    "ai_response": "The capital of France is Paris.",
+    "reference_answer": "Paris is the capital city of France.",
+    "evidence": "Paris is the capital city of France."
+  },
+  {
+    "id": "M2-002",
+    "dataset": "SQuAD",
+    "category": "incorrect",
+    "question": "What is the capital of France?",
+    "ai_response": "The capital of France is London.",
+    "reference_answer": "Paris is the capital city of France.",
+    "evidence": "Paris is the capital city of France."
+  },
+  {
+    "id": "M2-003",
+    "dataset": "SQuAD",
+    "category": "partially_correct",
+    "question": "What are the benefits of regular exercise?",
+    "ai_response": "Regular exercise improves physical health.",
+    "reference_answer": "Regular exercise improves physical health, strengthens muscles, supports mental health, and reduces the risk of chronic diseases.",
+    "evidence": "Regular exercise improves physical health, strengthens muscles, supports mental health, and reduces the risk of chronic diseases."
+  },
+  {
+    "id": "M2-004",
+    "dataset": "TruthfulQA",
+    "category": "irrelevant",
+    "question": "What is the capital of India?",
+    "ai_response": "Python is a popular programming language used for software development.",
+    "reference_answer": "New Delhi is the capital of India.",
+    "evidence": "New Delhi is the capital of India."
+  },
+  {
+    "id": "M2-005",
+    "dataset": "SQuAD",
+    "category": "incomplete",
+    "question": "What are the benefits of regular exercise?",
+    "ai_response": "Regular exercise improves physical health.",
+    "reference_answer": "Regular exercise improves physical health, strengthens muscles, supports mental health, and reduces the risk of chronic diseases.",
+    "evidence": "Regular exercise improves physical health, strengthens muscles, supports mental health, and reduces the risk of chronic diseases."
+  },
+  {
+    "id": "M2-006",
+    "dataset": "TruthfulQA",
+    "category": "unsupported",
+    "question": "What is the capital of France?",
+    "ai_response": "The capital of France is Paris. France has 20 states.",
+    "reference_answer": "Paris is the capital city of France.",
+    "evidence": "Paris is the capital city of France."
+  },
+  {
+    "id": "M2-007",
+    "dataset": "SQuAD",
+    "category": "contradictory",
+    "question": "What is the capital of France?",
+    "ai_response": "The capital of France is London.",
+    "reference_answer": "Paris is the capital city of France.",
+    "evidence": "Paris is the capital city of France."
+  }
+]
