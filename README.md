@@ -2,71 +2,111 @@
 
 ## Project Overview
 
-The **AI Response Validation System** is designed to evaluate AI-generated responses using multiple validation dimensions: relevance, accuracy/factuality, hallucination safety/faithfulness, and completeness.
+The **AI Response Validation System** evaluates AI-generated responses using multiple validation dimensions:
 
-The system uses a RAG-style reference knowledge base, semantic retrieval, specialized evaluation agents, a FastAPI backend, a Streamlit user interface, automated tests, benchmark evaluation, and Agile development practices.
+* Relevance
+* Accuracy / Factuality
+* Hallucination Safety / Faithfulness
+* Completeness
+
+The system uses a RAG-style reference knowledge base, semantic retrieval, specialized evaluation agents, a FastAPI backend, a Streamlit user interface, automated testing, benchmark evaluation, weighted verdict scoring, and batch CSV evaluation.
+
+The project is developed using **Agile methodology** across multiple milestones.
+
+---
+
+# System Architecture
+
+```text
+                         Evaluation Input
+                              |
+                              v
+                  FastAPI + Pydantic Validation
+                              |
+                              v
+                    Evaluation Orchestrator
+                              |
+              +---------------+---------------+
+              |               |               |
+              v               v               v
+        RAG Knowledge     Evaluation       Reference /
+           Base             Agents          Evidence
+              |               |
+              |       +-------+-------+-------+
+              |       |       |       |       |
+              |       v       v       v       v
+              |   Relevance Accuracy Hallucination Completeness
+              |       |       |       |       |
+              +-------+-------+-------+-------+
+                              |
+                              v
+                    Weighted Scoring
+                              |
+                              v
+                          Verdict
+                              |
+                +-------------+-------------+
+                |                           |
+                v                           v
+        Individual Results          Batch Evaluation
+                                        |
+                                        v
+                                CSV Multiple Records
+                                        |
+                                        v
+                                Results + Statistics
+```
+
+Detailed architecture documentation:
+
+* `architecture/system_architecture.md`
+* `architecture/agent_responsibilities.md`
 
 ---
 
 # Milestone 1 — Foundation & Evaluation Understanding
 
-Milestone 1 established the foundation for evaluating AI-generated responses.
+Milestone 1 established the foundation of the AI response validation system.
 
-It includes:
+## M1 Coverage
 
-* Evaluation research and architecture
-* RAG-style reference knowledge base
-* TruthfulQA and SQuAD benchmark sources
-* Text chunking
-* Embedding generation
-* Vector similarity retrieval
-* Multi-agent evaluation flow
-* FastAPI API
-* Streamlit UI
-* Automated testing
-* Agile delivery artifacts
-
-## Milestone 1 Coverage
-
-| Requirement           | Implementation                                                                  |
-| --------------------- | ------------------------------------------------------------------------------- |
-| M1.1 Research         | `architecture/milestone1_research.md`                                           |
-| M1.2 Architecture     | `architecture/system_architecture.md`, `architecture/agent_responsibilities.md` |
-| M1.3 Evaluation Input | `frontend/final_ui.py`, `app/main.py`, `app/schemas.py`                         |
-| M1.4 Benchmarks       | `app/knowledge_base/ingest.py`, `data/benchmark_manifest.json`                  |
-| Chunking              | `app/knowledge_base/chunking.py`                                                |
-| Embeddings            | `app/knowledge_base/embeddings.py`                                              |
-| Vector Retrieval      | `app/knowledge_base/vector_store.py`                                            |
-| Retrieval Validation  | `scripts/validate_retrieval.py`, `tests/test_retrieval.py`                      |
-| Automated Testing     | `tests/`                                                                        |
-| Agile Methodology     | `Agile/`                                                                        |
+| Requirement                | Implementation                                          |
+| -------------------------- | ------------------------------------------------------- |
+| Evaluation research        | `architecture/milestone1_research.md`                   |
+| System architecture        | `architecture/system_architecture.md`                   |
+| Agent responsibilities     | `architecture/agent_responsibilities.md`                |
+| Evaluation Input Module    | `frontend/final_ui.py`, `app/main.py`, `app/schemas.py` |
+| Question input             | `app/schemas.py`                                        |
+| AI response input          | `app/schemas.py`                                        |
+| Reference / Evidence input | `app/schemas.py`                                        |
+| Source document input      | `app/schemas.py`                                        |
+| TruthfulQA benchmark       | `app/knowledge_base/ingest.py`                          |
+| SQuAD benchmark            | `app/knowledge_base/ingest.py`                          |
+| Text chunking              | `app/knowledge_base/chunking.py`                        |
+| Embeddings                 | `app/knowledge_base/embeddings.py`                      |
+| Vector retrieval           | `app/knowledge_base/vector_store.py`                    |
+| Retrieval validation       | `scripts/validate_retrieval.py`                         |
+| Automated testing          | `tests/`                                                |
+| Agile methodology          | `Agile/`                                                |
 
 ---
 
 # Milestone 2 — Evaluation Agents & Validation
 
-Milestone 2 focuses on implementing and validating specialized evaluation agents.
+Milestone 2 implemented and validated the specialized evaluation agents.
 
 ## M2.1 Relevance Judge Agent
 
-The Relevance Judge Agent evaluates whether an AI-generated response directly addresses the submitted question.
+The Relevance Judge Agent evaluates whether an AI-generated response addresses the submitted question.
 
 It provides:
 
 * Relevance score
 * Relevance category
-* Explanation/reasoning
+* Explanation / reasoning
 * Semantic similarity
 * Question-response overlap
 * Evidence support when available
-
-Relevance categories include:
-
-* Fully Relevant
-* Mostly Relevant
-* Partially Relevant
-* Mostly Unrelated
-* Off-Topic
 
 Implementation:
 
@@ -76,31 +116,22 @@ Implementation:
 
 ## M2.2 Accuracy Judge Agent
 
-The Accuracy Judge Agent evaluates the factual correctness of an AI-generated response.
+The Accuracy Judge Agent evaluates factual correctness.
 
-It uses:
+It compares the AI response against:
 
-1. A provided reference answer when available.
+1. A supplied reference answer when available.
 2. Retrieved knowledge-base evidence when a reference answer is not available.
 
-The agent provides:
+It provides:
 
 * Accuracy score
 * Accuracy category
-* Reasoning/explanation
+* Reasoning
 * Supporting evidence
 * Semantic similarity
 * Overlap score
 * Contradiction detection
-
-Accuracy categories include:
-
-* Correct
-* Mostly Correct
-* Partially Correct
-* Mostly Incorrect
-* Incorrect
-* Uncertain when sufficient evidence is unavailable
 
 Implementation:
 
@@ -110,19 +141,17 @@ Implementation:
 
 ## M2.3 Hallucination Detection Agent
 
-The Hallucination Detection Agent verifies individual factual claims against retrieved evidence.
+The Hallucination Detection Agent evaluates factual claims against available evidence.
 
-The agent:
+It:
 
-* Splits responses into individual claims
-* Checks each claim against available evidence
+* Extracts individual claims
+* Checks claims against evidence
 * Measures semantic support
-* Checks for contradictions
+* Detects contradictions
 * Identifies unsupported claims
-* Provides supporting evidence
-* Provides reasoning for unsupported or contradictory claims
-
-This allows the system to identify a specific unsupported statement rather than simply marking the complete response as hallucinated.
+* Provides evidence
+* Provides reasoning
 
 Implementation:
 
@@ -132,11 +161,11 @@ Implementation:
 
 ## M2.4 Benchmark & Agent Validation
 
-Milestone 2 includes a dedicated evaluation set:
+The Milestone 2 evaluation set is stored in:
 
 `data/milestone2_evaluation_set.json`
 
-The evaluation set contains representative cases covering:
+It covers:
 
 * Correct responses
 * Incorrect responses
@@ -146,186 +175,313 @@ The evaluation set contains representative cases covering:
 * Unsupported claims
 * Contradictory responses
 
-The Milestone 2 evaluation tests are implemented in:
+Tests:
 
 `tests/test_milestone2_evaluation.py`
 
-The benchmark manifest containing TruthfulQA and SQuAD sources is available at:
+---
 
-`data/benchmark_manifest.json`
+# Milestone 3 — Completeness, Verdict, Results & Batch Evaluation
+
+Milestone 3 extends the system from individual evaluation agents to complete response evaluation and batch processing.
 
 ---
 
-# Architecture
+## M3.1 Completeness Judge Agent
 
-```text
-Evaluation UI
-      |
-      v
-FastAPI + Pydantic Validation
-      |
-      v
-Evaluation Orchestrator <---- RAG Knowledge Base
-      |                         |-- TruthfulQA
-      |                         |-- SQuAD
-      |                         |-- Cleaning + Chunking
-      |                         |-- Embeddings
-      |                         `-- Vector Similarity Search
-      |
-      +--> Relevance Judge
-      |
-      +--> Accuracy Judge
-      |
-      +--> Hallucination Detection Judge
-      |
-      `--> Completeness Judge
-              |
-              v
-       Scoring + Verdict
-              |
-              v
-     Structured Results + Evidence
+The Completeness Judge Agent determines whether an AI response sufficiently covers the expected aspects of a question.
+
+It:
+
+* Identifies expected aspects
+* Compares the response against those aspects
+* Identifies addressed aspects
+* Identifies partially addressed aspects
+* Identifies missing aspects
+* Uses a reference answer when available
+* Uses retrieved evidence when a reference answer is unavailable
+* Produces a completeness score
+* Provides reasoning
+
+Implementation:
+
+`app/agents/completeness_agent.py`
+
+Tests:
+
+`tests/test_milestone3_completeness.py`
+
+The completeness agent was tested with:
+
+* Fully complete responses
+* Partially complete responses
+* Substantially incomplete responses
+* RAG evidence
+* No reference/evidence
+
+---
+
+## M3.2 Weighted Evaluation & Verdict
+
+The system combines the four evaluation dimensions using a weighted scoring model.
+
+### Current Weights
+
+| Dimension            | Weight |
+| -------------------- | -----: |
+| Relevance            |    25% |
+| Accuracy             |    25% |
+| Hallucination Safety |    25% |
+| Completeness         |    25% |
+
+The weighted overall score is calculated from all four dimensions.
+
+### Verdict Categories
+
+|   Overall Score | Verdict           |
+| --------------: | ----------------- |
+|       `>= 0.70` | Pass              |
+| `0.40 – < 0.70` | Needs Improvement |
+|        `< 0.40` | Fail              |
+
+A critical contradiction detected between the AI response and available evidence can also result in a **Fail** verdict.
+
+Implementation:
+
+* `app/core/scoring.py`
+* `app/evaluation/verdict.py`
+* `app/evaluation/orchestrator.py`
+
+Tests:
+
+`tests/test_milestone3_verdict.py`
+
+---
+
+## M3.3 Evaluation Results Display
+
+The Streamlit interface displays the complete evaluation result.
+
+### Individual Scores
+
+* Relevance
+* Accuracy
+* Hallucination Safety
+* Completeness
+* Overall Score
+
+### Evaluation Reasoning
+
+The UI displays reasoning for each evaluation dimension.
+
+### Accuracy Evidence
+
+The system displays supporting evidence used for accuracy evaluation.
+
+### Hallucination Details
+
+The UI displays:
+
+* Unsupported claims
+* Hallucinated claims
+* Contradictions
+* Evidence
+
+### Completeness Details
+
+The UI displays:
+
+* Addressed aspects
+* Partially addressed aspects
+* Missing aspects
+
+### Final Result
+
+The system displays:
+
+* Overall score
+* Verdict
+* Verdict reason
+* Validation record ID
+* Retrieved evidence
+
+Implementation:
+
+`frontend/final_ui.py`
+
+---
+
+# M3.4 Batch CSV Evaluation
+
+Milestone 3.4 adds batch evaluation of multiple question-answer records.
+
+Users can upload a CSV containing:
+
+* `question` — required
+* `ai_response` — required
+* `reference_answer` — optional
+* `source_document` — optional
+
+Example:
+
+```csv
+question,ai_response,reference_answer,source_document
+"What is the capital of France?","The capital of France is Paris.","Paris is the capital city of France.",""
+"What is 2 plus 2?","2 plus 2 equals 4.","2 plus 2 equals 4.",""
 ```
 
-The detailed architecture is documented in:
+Implementation:
 
-`architecture/system_architecture.md`
+`app/batch_evaluator.py`
 
-Agent responsibilities are documented in:
+The Streamlit batch interface is implemented in:
 
-`architecture/agent_responsibilities.md`
+`frontend/final_ui.py`
+
+---
+
+## Batch Validation
+
+The batch module validates:
+
+* Required CSV columns
+* Missing questions
+* Missing AI responses
+* Optional reference answers
+* Optional source documents
+* Malformed CSV files
+
+Invalid records are reported separately and do not stop the evaluation of valid records.
+
+---
+
+## Batch Evaluation Results
+
+The batch results table displays:
+
+* Row number
+* Question
+* Response ID
+* Relevance score
+* Accuracy score
+* Hallucination Safety score
+* Completeness score
+* Overall score
+* Verdict
+
+---
+
+## Batch Detail Inspection
+
+Users can select an individual batch result and inspect:
+
+* Relevance reasoning
+* Accuracy reasoning
+* Supporting evidence
+* Hallucination reasoning
+* Unsupported claims
+* Contradictions
+* Completeness reasoning
+* Addressed aspects
+* Partially addressed aspects
+* Missing aspects
+
+---
+
+## Batch Aggregated Statistics
+
+The system calculates:
+
+* Average Relevance score
+* Average Accuracy score
+* Average Hallucination Safety score
+* Average Completeness score
+* Average Overall score
+* Pass count
+* Needs Improvement count
+* Fail count
+* Hallucination-risk record count
+
+---
+
+## Batch Testing
+
+M3.4 was tested using:
+
+* Valid CSV files
+* Invalid records
+* Missing required columns
+* Optional reference/source fields
+* Malformed CSV files
+* Small batch files
+* 10-record batch files
+
+The 10-record batch test successfully processed all 10 records.
 
 ---
 
 # Technology Stack
 
-* Python
-* FastAPI
-* Pydantic
-* Streamlit
-* Hugging Face Datasets
-* Sentence Transformers
-* NumPy
-* scikit-learn
-* Pytest
-* JSON / JSONL
-* Git / GitHub
-* Agile methodology
+The project uses:
+
+* **Python**
+* **FastAPI**
+* **Pydantic**
+* **Streamlit**
+* **Hugging Face Datasets**
+* **Sentence Transformers**
+* **NumPy**
+* **scikit-learn**
+* **Pytest**
+* **Pandas**
+* **CSV**
+* **JSON / JSONL**
+* **Git / GitHub**
+* **Agile methodology**
 
 ---
 
-# Benchmark Sources
+# Knowledge Base & Benchmark Sources
 
 The project uses benchmark datasets from Hugging Face:
 
-* TruthfulQA — truthfulness and hallucination-oriented question answering
-* SQuAD — reading-comprehension question answering
+* TruthfulQA
+* SQuAD
 
-The benchmark manifest records dataset identifiers, configurations, splits, purposes, and licenses.
+The benchmark manifest is stored in:
 
-Raw benchmark downloads are not committed to the repository. They can be reproduced using the ingestion script.
+`data/benchmark_manifest.json`
+
+The knowledge-base pipeline is:
+
+```text
+Benchmark Dataset
+       |
+       v
+Normalization
+       |
+       v
+Chunking
+       |
+       v
+Embedding Generation
+       |
+       v
+Vector Index
+       |
+       v
+Semantic Retrieval
+```
+
+The default embedding model is:
+
+`sentence-transformers/all-MiniLM-L6-v2`
+
+A deterministic HashingVectorizer fallback is available for local/CI execution when required.
 
 ---
 
 # Setup on Windows PowerShell
-
-```powershell
-cd "C:\Users\Sanjana\OneDrive\Desktop\AI_Response_Validation_System"
-
-python -m venv venv
-
-.\venv\Scripts\Activate.ps1
-
-python -m pip install --upgrade pip
-
-python -m pip install -r requirements.txt
-```
-
-If PowerShell blocks virtual-environment activation:
-
-```powershell
-venv\Scripts\python.exe -m pip install -r requirements.txt
-```
-
----
-
-# Build the Benchmark Knowledge Base
-
-For a reproducible bounded development dataset:
-
-```powershell
-python -m app.knowledge_base.ingest --mode benchmarks --squad-limit 200 --truthfulqa-limit 200
-```
-
-The process is:
-
-```text
-Hugging Face Dataset
-        |
-        v
-Normalization
-        |
-        v
-Chunking
-        |
-        v
-Embeddings
-        |
-        v
-Local Vector Index
-```
-
-The default embedding backend is:
-
-`sentence-transformers/all-MiniLM-L6-v2`
-
-If the model cannot be downloaded, the project can fall back to a deterministic HashingVectorizer for local/CI execution.
-
-To require the real dense embedding model:
-
-```powershell
-$env:EMBEDDING_STRICT="1"
-```
-
----
-
-# Validate Retrieval Quality
-
-After building the benchmark knowledge base:
-
-```powershell
-python scripts/validate_retrieval.py
-```
-
-The command generates:
-
-`data/processed/retrieval_report.json`
-
-and reports retrieval performance for representative benchmark questions.
-
----
-
-# Run the Backend
-
-Start the FastAPI backend:
-
-```powershell
-uvicorn app.main:app --reload
-```
-
-API:
-
-`http://127.0.0.1:8000`
-
-Swagger documentation:
-
-`http://127.0.0.1:8000/docs`
-
----
-
-# Run the User Interface
-
-Open a second PowerShell terminal.
 
 Navigate to the project:
 
@@ -333,21 +489,90 @@ Navigate to the project:
 cd "C:\Users\Sanjana\OneDrive\Desktop\AI_Response_Validation_System"
 ```
 
-Activate the virtual environment if required:
+Create a virtual environment:
+
+```powershell
+python -m venv venv
+```
+
+Activate it:
 
 ```powershell
 .\venv\Scripts\Activate.ps1
 ```
 
-Then run:
+Install dependencies:
+
+```powershell
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+---
+
+# Build the Knowledge Base
+
+```powershell
+python -m app.knowledge_base.ingest --mode benchmarks --squad-limit 200 --truthfulqa-limit 200
+```
+
+---
+
+# Validate Retrieval
+
+```powershell
+python scripts/validate_retrieval.py
+```
+
+This generates:
+
+`data/processed/retrieval_report.json`
+
+---
+
+# Run the Backend
+
+```powershell
+uvicorn app.main:app --reload
+```
+
+Backend:
+
+`http://127.0.0.1:8000`
+
+Swagger API documentation:
+
+`http://127.0.0.1:8000/docs`
+
+---
+
+# Run the Streamlit Interface
+
+Open another PowerShell terminal:
+
+```powershell
+cd "C:\Users\Sanjana\OneDrive\Desktop\AI_Response_Validation_System"
+```
+
+Activate the environment if required:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+Run:
 
 ```powershell
 streamlit run frontend\final_ui.py
 ```
 
-The Streamlit interface normally opens at:
+The interface normally opens at:
 
 `http://localhost:8501`
+
+---
+
+# Single Response Evaluation
 
 The interface accepts:
 
@@ -356,11 +581,50 @@ The interface accepts:
 * Reference / Evidence
 * Source Document / Reference Material
 
-The system then evaluates the response using the evaluation pipeline.
+The response is processed through:
+
+```text
+Question + AI Response
+          |
+          v
+     Retrieval
+          |
+          v
+    Relevance Agent
+    Accuracy Agent
+    Hallucination Agent
+    Completeness Agent
+          |
+          v
+    Weighted Scoring
+          |
+          v
+       Verdict
+```
 
 ---
 
-# Run Tests
+# Batch CSV Evaluation
+
+The Streamlit interface provides:
+
+**📦 Batch CSV Evaluation**
+
+Upload a CSV containing multiple question-answer records.
+
+The system:
+
+1. Reads the CSV.
+2. Validates required fields.
+3. Processes each valid record.
+4. Continues when an individual record is invalid.
+5. Displays individual evaluation results.
+6. Allows detailed inspection.
+7. Calculates aggregated statistics.
+
+---
+
+# Testing
 
 Run the complete test suite:
 
@@ -368,39 +632,55 @@ Run the complete test suite:
 pytest -v
 ```
 
-The current Milestone 2 regression suite passes:
+### Current Test Result
 
-**19 tests passed**
-
-There are currently 4 deprecation warnings, but they do not cause test failures.
-
-To run only the Milestone 2 evaluation tests:
-
-```powershell
-pytest tests\test_milestone2_evaluation.py -v
+```text
+34 passed, 4 warnings
 ```
 
-Current result:
+All 34 automated tests pass successfully.
 
-**2 tests passed**
+The warnings are dependency/framework deprecation warnings and do not represent test failures.
+
+### Test Coverage Includes
+
+* Relevance Agent
+* Accuracy Agent
+* Hallucination Detection Agent
+* Benchmark normalization
+* Milestone 2 evaluation
+* Completeness Agent
+* Weighted scoring
+* Verdict categories
+* Contradiction handling
+* Pipeline routing
+* Retrieval
+* Input validation
+* Batch CSV evaluation
+* Invalid batch records
+* Missing required columns
+* Optional reference/source fields
 
 ---
 
-# Milestone 2 Evaluation Example
+# Milestone 3.4 Batch Tests
 
-The integrated evaluation pipeline has been tested using a factual question and reference evidence.
+Dedicated M3.4 tests are located in:
 
-Example result:
+`tests/test_milestone3_batch.py`
 
-| Evaluation           |  Score |
-| -------------------- | -----: |
-| Relevance            | 92.74% |
-| Accuracy             | 88.19% |
-| Hallucination Safety | 98.19% |
-| Completeness         | 82.50% |
-| Overall Verdict      |  VALID |
+The tests verify:
 
-These values represent a development test case and should not be interpreted as calibrated production accuracy.
+1. Valid batch evaluation
+2. Invalid row does not stop the batch
+3. Missing required column handling
+4. Optional reference/source fields
+
+The dedicated M3.4 test suite passes:
+
+```text
+4 passed
+```
 
 ---
 
@@ -413,30 +693,46 @@ The system uses four evaluation dimensions:
 * Hallucination Safety — 25%
 * Completeness — 25%
 
-The overall score is calculated using the weighted mean.
+The weighted mean produces the overall evaluation score.
 
-A score of:
+The current development thresholds are:
 
-* `>= 0.70` → `VALID`
-* `< 0.70` → `FILTER BLOCKED`
+```text
+Overall Score >= 0.70
+        |
+        v
+      Pass
 
-These are development baseline thresholds and are not claims of calibrated production accuracy.
+0.40 <= Overall Score < 0.70
+        |
+        v
+Needs Improvement
+
+Overall Score < 0.40
+        |
+        v
+      Fail
+```
+
+These are development thresholds and should not be interpreted as calibrated production accuracy.
 
 ---
 
 # Agile Working Model
 
-The `Agile/` directory contains project management and testing artifacts, including:
+The project follows Agile development practices.
+
+The `Agile/` directory contains:
 
 * Product Backlog
 * Sprint Backlog
-* Stand-up Meeting records
+* Stand-up records
 * Retrospection
 * Defect Tracker
 * Unit Test Plan
 * Milestone documentation
 
-The development workflow is:
+The workflow is:
 
 ```text
 Backlog
@@ -460,22 +756,26 @@ Retrospective
 Backlog Update
 ```
 
-A story is considered complete after its implementation, acceptance criteria, testing, documentation, and review evidence have been addressed.
+A story is considered complete after implementation, acceptance criteria, testing, documentation, and review evidence have been addressed.
 
 ---
 
-# Current Milestone 2 Status
+# Current Project Status
 
-| Milestone 2 Item              | Status    |
-| ----------------------------- | --------- |
-| Relevance Judge Agent         | Completed |
-| Accuracy Judge Agent          | Completed |
-| Hallucination Detection Agent | Completed |
-| Benchmark Evaluation Set      | Completed |
-| Agent Validation              | Completed |
-| Orchestrator Integration      | Completed |
-| Regression Testing            | Completed |
-| Agile Documentation           | Updated   |
+| Milestone     | Requirement                           | Status               |
+| ------------- | ------------------------------------- | -------------------- |
+| M1            | Foundation & Evaluation Understanding | Completed            |
+| M2.1          | Relevance Judge Agent                 | Completed            |
+| M2.2          | Accuracy Judge Agent                  | Completed            |
+| M2.3          | Hallucination Detection Agent         | Completed            |
+| M2.4          | Benchmark & Agent Validation          | Completed            |
+| M3.1          | Completeness Judge Agent              | Completed            |
+| M3.2          | Weighted Evaluation & Verdict         | Completed            |
+| M3.3          | Evaluation Results Display            | Completed            |
+| M3.4          | Batch CSV Evaluation                  | Completed            |
+| Testing       | Full automated test suite             | 34/34 Passed         |
+| Batch Testing | 10-record CSV test                    | Completed            |
+| Agile         | Documentation & testing artifacts     | In progress / review |
 
 ---
 
@@ -504,3 +804,5 @@ Possible future improvements include:
 * Score calibration
 * More comprehensive hallucination evaluation
 * Additional retrieval and evaluation metrics
+* Larger-scale batch processing
+* Improved evaluation visualization

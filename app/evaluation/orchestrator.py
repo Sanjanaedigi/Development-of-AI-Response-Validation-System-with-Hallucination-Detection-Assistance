@@ -26,9 +26,11 @@ def evaluate_submission(
         question,
         top_k=5
     )
+
     retrieved = [
-    item for item in retrieved
-    if item.get("similarity", 0) >= 0.30
+        item
+        for item in retrieved
+        if item.get("similarity", 0) >= 0.30
     ]
 
     # -------------------------------------------------
@@ -36,7 +38,6 @@ def evaluate_submission(
     # -------------------------------------------------
 
     if reference_evidence:
-
         retrieved.insert(
             0,
             {
@@ -78,7 +79,8 @@ def evaluate_submission(
         "completeness": completeness_agent.evaluate(
             question,
             ai_response,
-            retrieved
+            retrieved,
+            reference_answer
         )
     }
 
@@ -88,24 +90,19 @@ def evaluate_submission(
 
     score = overall_score(results)
 
-    final_verdict, reason = verdict(score)
+    final_verdict, reason = verdict(results)
 
     # -------------------------------------------------
     # STEP 5: Return final result
     # -------------------------------------------------
 
     return {
-
-        "submission_id":
-            "VAL-" + uuid4().hex[:10].upper(),
-
-        **results,
-
-        "overall_score": score,
-
-        "verdict": final_verdict,
-
-        "verdict_reason": reason,
-
-        "retrieved_evidence": retrieved
-    }
+    "submission_id":
+        "VAL-" + uuid4().hex[:10].upper(),
+    "question": question,
+    **results,
+    "overall_score": score,
+    "verdict": final_verdict,
+    "verdict_reason": reason,
+    "retrieved_evidence": retrieved
+}
