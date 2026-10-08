@@ -492,13 +492,13 @@ cd "C:\Users\Sanjana\OneDrive\Desktop\AI_Response_Validation_System"
 Create a virtual environment:
 
 ```powershell
-python -m venv venv
+python -m venv .venv
 ```
 
 Activate it:
 
 ```powershell
-.\venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 ```
 
 Install dependencies:
@@ -806,3 +806,336 @@ Possible future improvements include:
 * Additional retrieval and evaluation metrics
 * Larger-scale batch processing
 * Improved evaluation visualization
+
+# Milestone 4 — Evaluation Scoring Dashboard, Reporting & End-to-End Validation
+
+Milestone 4 extends the AI Response Validation System from individual and batch evaluation into a complete evaluation analytics and reporting system.
+
+The milestone focuses on:
+
+* Evaluation scoring dashboard
+* Verdict distribution
+* Average dimension scores
+* Score distributions
+* Hallucination statistics
+* Missing-information statistics
+* Structured PDF reporting
+* Single evaluation end-to-end validation
+* Batch evaluation end-to-end validation
+* Batch-to-dashboard integration
+
+---
+
+## M4.1 Evaluation Scoring Dashboard
+
+The Streamlit application provides a dedicated **Dashboard** mode for analyzing stored evaluation results.
+
+The dashboard displays:
+
+* Total evaluations
+* Passed evaluations
+* Needs Improvement evaluations
+* Failed evaluations
+* Verdict percentages
+* Average Relevance score
+* Average Accuracy score
+* Average Hallucination Safety score
+* Average Completeness score
+* Recent evaluation results
+
+The dashboard reads stored evaluation records and calculates statistics dynamically.
+
+Implementation:
+
+```text
+frontend/final_ui.py
+data/submissions.jsonl
+data/batch_evaluation_results.csv
+```
+
+---
+
+## M4.2 Verdict Distribution
+
+The dashboard groups evaluation results into three major verdict categories:
+
+| Verdict Category  | Meaning                                                |
+| ----------------- | ------------------------------------------------------ |
+| Pass              | Evaluation satisfies the configured quality threshold  |
+| Needs Improvement | Evaluation requires improvement                        |
+| Fail              | Evaluation does not satisfy the required quality level |
+
+The dashboard displays the number and percentage of evaluations belonging to each category.
+
+The system also recognizes equivalent verdict labels such as `VALID`, `WARNING`, `BLOCKED`, `FAIL`, and related evaluation outcomes when calculating dashboard statistics.
+
+---
+
+## M4.3 Average Dimension Scores
+
+The dashboard calculates the average score for each evaluation dimension:
+
+| Dimension            | Weight |
+| -------------------- | -----: |
+| Relevance            |    25% |
+| Accuracy             |    25% |
+| Hallucination Safety |    25% |
+| Completeness         |    25% |
+
+The dashboard presents these values as percentage-based score cards.
+
+The overall score is calculated using the weighted evaluation dimensions.
+
+---
+
+## M4.4 Score Distribution
+
+The dashboard provides score-distribution visualizations for the four evaluation dimensions.
+
+The distributions allow users to identify:
+
+* High-scoring evaluations
+* Low-scoring evaluations
+* Variation between evaluation dimensions
+* Areas requiring improvement
+
+The dashboard uses the stored evaluation records to generate these statistics dynamically.
+
+---
+
+## M4.5 Hallucination Statistics
+
+The dashboard provides hallucination-related statistics to help identify potentially unsafe AI responses.
+
+The dashboard reports:
+
+* Hallucination-safe evaluation count
+* Hallucination-flagged evaluation count
+* Hallucination safety score
+* Unsupported-claim information
+* Contradiction-related information
+* Hallucination trends across stored evaluations
+
+These statistics are derived from the Hallucination Detection Agent results.
+
+---
+
+## M4.6 Missing-Information Statistics
+
+The dashboard also analyzes completeness-related missing information.
+
+It reports:
+
+* Evaluations containing missing information
+* Total missing aspects
+* Partially addressed aspects
+
+This allows users to identify responses that may be factually related to the question but do not provide sufficient coverage.
+
+---
+
+## M4.7 Structured PDF Export
+
+Milestone 4 adds a structured PDF reporting feature.
+
+Users can generate a PDF report from the Dashboard.
+
+The report contains:
+
+* Evaluation summary
+* Total evaluation count
+* Verdict statistics
+* Average dimension scores
+* Overall score information
+* Flagged evaluation responses
+* Evaluation questions
+* Dimension-level information
+* Recommendations
+
+The generated report can be downloaded directly from the Streamlit interface.
+
+Implementation:
+
+```text
+frontend/final_ui.py
+ReportLab
+```
+
+The generated report uses the filename:
+
+```text
+AI_Response_Validation_Milestone4_Report.pdf
+```
+
+---
+
+## M4.8 Single Evaluation End-to-End Testing
+
+The complete Single Evaluation workflow was tested from the Streamlit interface through the backend evaluation pipeline and persistent storage.
+
+The workflow was verified as:
+
+```text
+User Input
+    |
+    v
+Streamlit Interface
+    |
+    v
+FastAPI Evaluation API
+    |
+    v
+Input Validation
+    |
+    v
+Evaluation Orchestrator
+    |
+    +--> Relevance
+    +--> Accuracy
+    +--> Hallucination
+    +--> Completeness
+    |
+    v
+Weighted Scoring
+    |
+    v
+Verdict
+    |
+    v
+Stored Evaluation Record
+    |
+    v
+Dashboard
+```
+
+A test evaluation was successfully processed and stored with a validation record ID.
+
+---
+
+## M4.9 Batch Evaluation End-to-End Testing
+
+The complete Batch Evaluation workflow was also tested.
+
+The workflow was verified as:
+
+```text
+CSV Upload
+    |
+    v
+CSV Validation
+    |
+    v
+Batch Evaluation
+    |
+    v
+Individual AI Response Evaluation
+    |
+    v
+Evaluation Results
+    |
+    v
+CSV Results
+    |
+    v
+Dashboard Statistics
+```
+
+A 10-record batch CSV was successfully processed.
+
+The batch results were written to:
+
+```text
+data/batch_evaluation_results.csv
+```
+
+The processed batch results were also reflected in the Dashboard statistics.
+
+---
+
+## M4.10 Batch-to-Dashboard Integration
+
+The Batch Evaluation module and Dashboard were tested together.
+
+After processing a batch:
+
+1. Multiple records are evaluated.
+2. Results are stored.
+3. Dashboard statistics are recalculated.
+4. Total evaluation count is updated.
+5. Verdict counts are updated.
+6. Average dimension scores are updated.
+7. Hallucination statistics are updated.
+8. Missing-information statistics are updated.
+
+This verifies the integration between evaluation, persistent storage, batch processing, and dashboard analytics.
+
+---
+
+## M4.11 Milestone 4 Validation Status
+
+| Requirement                                   | Status      |
+| --------------------------------------------- | ----------- |
+| Evaluation Scoring Dashboard                  | Completed   |
+| Pass / Needs Improvement / Fail visualization | Completed   |
+| Average dimension scores                      | Completed   |
+| Score distributions                           | Completed   |
+| Hallucination statistics                      | Completed   |
+| Hallucination trends                          | Completed   |
+| Missing-information statistics                | Completed   |
+| Structured PDF export                         | Completed   |
+| Single Evaluation E2E testing                 | Completed   |
+| Batch Evaluation E2E testing                  | Completed   |
+| Batch-to-Dashboard integration                | Completed   |
+| Final two-AI-system demonstration             | Pending     |
+| Final documentation/report                    | In progress |
+
+---
+
+## M4 Implementation Files
+
+Important Milestone 4 functionality is implemented primarily in:
+
+```text
+frontend/final_ui.py
+data/submissions.jsonl
+data/batch_evaluation_results.csv
+```
+
+The PDF reporting functionality uses:
+
+```text
+ReportLab
+```
+
+---
+
+# Updated Project Status
+
+The project currently contains four development milestones:
+
+```text
+Milestone 1
+Foundation & Evaluation Understanding
+        |
+        v
+Milestone 2
+Evaluation Agents & Validation
+        |
+        v
+Milestone 3
+Completeness, Verdict & Batch Evaluation
+        |
+        v
+Milestone 4
+Dashboard, Reporting & End-to-End Validation
+```
+
+Milestones 1, 2, 3 and the core implementation of Milestone 4 have been completed.
+
+The remaining final activities are:
+
+1. Final documentation
+2. Demonstration using at least two AI systems
+3. Final project review
+4. Final Git commit and push
+

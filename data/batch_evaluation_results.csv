@@ -1,0 +1,11 @@
+question,ai_response,overall_score,relevance_score,accuracy_score,hallucination_score,completeness_score,verdict
+What is the capital of France?,The capital of France is Paris.,0.2959,0.9274,0.2165,0.0198,0.0198,Fail
+What is 2 plus 2?,2 plus 2 equals 4.,0.3154,0.9021,0.2469,0.0562,0.0562,Fail
+What is the largest planet?,Jupiter is the largest planet.,0.3117,0.8942,0.2449,0.0539,0.0539,Fail
+What is the capital of India?,The capital of India is New Delhi.,0.2561,0.8161,0.2025,0.003,0.003,Fail
+What is photosynthesis?,Photosynthesis is the process by which plants use light to make food.,0.264,0.8768,0.1793,0.0,0.0,Fail
+What are benefits of exercise?,Exercise improves physical fitness.,0.2223,0.685,0.2012,0.0015,0.0015,Fail
+What is the capital of France?,The capital of France is London.,0.2645,0.8818,0.176,0.0,0.0,Fail
+What is 10 divided by 2?,10 divided by 2 equals 5.,0.3519,0.9213,0.2843,0.1011,0.1011,Fail
+What is water made of?,Water is made of hydrogen and oxygen.,0.2984,0.8639,0.2382,0.0458,0.0458,Fail
+What is the Earth?,The Earth is a planet in the Solar System.,0.292,0.8402,0.2376,0.0451,0.0451,Fail
