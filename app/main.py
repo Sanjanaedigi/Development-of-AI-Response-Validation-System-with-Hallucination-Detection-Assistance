@@ -1,11 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import traceback
 
 from app.schemas import EvaluationRequest, EvaluationResponse
 from app.evaluation.orchestrator import evaluate_submission
 from app.database.storage import save_submission, utc_now
 from app.knowledge_base.ingest import build_seed_kb
-from app.core.config import KB_FILE
+from app.core.config import KB_FILE, EMBEDDING_BACKEND
 
 
 app = FastAPI(
@@ -50,6 +51,15 @@ def health():
     }
 
 
+@app.get("/version")
+def version():
+
+    return {
+        "version": "1.0.1",
+        "embedding_backend": EMBEDDING_BACKEND
+    }
+
+
 @app.post(
     "/api/v1/evaluate",
     response_model=EvaluationResponse,
@@ -57,17 +67,28 @@ def health():
 )
 def evaluate(request: EvaluationRequest):
 
-    result = evaluate_submission(
-        question=request.question,
-        ai_response=request.ai_response,
-        reference_evidence=request.evidence_text()
-    )
+    try:
+        result = evaluate_submission(
+            question=request.question,
+            ai_response=request.ai_response,
+            reference_evidence=request.evidence_text()
+        )
 
-    save_submission(
-        {
-            "timestamp": utc_now(),
-            **result
-        }
-    )
+        try:
+            save_submission(
+                {
+                    "timestamp": utc_now(),
+                    **result
+                }
+            )
+        except Exception as storage_err:
+            print("Storage save warning:", storage_err)
 
-    return result
+        return result
+
+    except Exception as exc:
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Evaluation failed: {exc}"
+        )
