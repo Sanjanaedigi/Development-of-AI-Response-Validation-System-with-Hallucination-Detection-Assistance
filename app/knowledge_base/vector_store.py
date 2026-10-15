@@ -15,12 +15,18 @@ def build_index(records=None, backend=None):
     return len(records)
 
 def _load_index():
+    current_backend = resolve_backend()
     if not KB_INDEX_FILE.exists():
-        records=load_records()
-        if not records: return [],np.empty((0,0),dtype=np.float32),"hashing"
-        build_index(records)
-    payload=json.loads(KB_INDEX_FILE.read_text(encoding="utf-8"))
-    return payload["records"],np.asarray(payload["embeddings"],dtype=np.float32),payload["backend"]
+        records = load_records()
+        if not records:
+            return [], np.empty((0, 0), dtype=np.float32), current_backend
+        build_index(records, current_backend)
+    payload = json.loads(KB_INDEX_FILE.read_text(encoding="utf-8"))
+    if payload.get("backend") != current_backend:
+        records = payload.get("records") or load_records()
+        build_index(records, current_backend)
+        payload = json.loads(KB_INDEX_FILE.read_text(encoding="utf-8"))
+    return payload["records"], np.asarray(payload["embeddings"], dtype=np.float32), payload["backend"]
 
 def semantic_search(query,top_k=None,min_similarity=0.40):
     records,matrix,backend=_load_index()

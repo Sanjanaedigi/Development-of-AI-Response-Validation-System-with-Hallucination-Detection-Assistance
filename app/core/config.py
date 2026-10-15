@@ -10,7 +10,7 @@ KB_INDEX_FILE = PROCESSED_DIR / "embedding_index.json"
 SUBMISSIONS_FILE = DATA_DIR / "submissions.jsonl"
 RETRIEVAL_REPORT_FILE = PROCESSED_DIR / "retrieval_report.json"
 
-EMBEDDING_BACKEND = os.getenv("EMBEDDING_BACKEND", "tfidf")
+EMBEDDING_BACKEND = os.getenv("EMBEDDING_BACKEND", "hashing")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 RETRIEVAL_TOP_K = int(os.getenv("RETRIEVAL_TOP_K", "5"))
 

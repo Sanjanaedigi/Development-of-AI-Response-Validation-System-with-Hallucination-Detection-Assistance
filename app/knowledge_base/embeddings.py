@@ -16,7 +16,7 @@ def _sentence_model():
     return SentenceTransformer(os.getenv("EMBEDDING_MODEL", DEFAULT_MODEL))
 
 def resolve_backend(requested=None):
-    requested=(requested or os.getenv("EMBEDDING_BACKEND", "tfidf")).lower()
+    requested=(requested or os.getenv("EMBEDDING_BACKEND", "hashing")).lower()
     if requested in {"sentence-transformers","sentence_transformers","st"}:
         try:
             _sentence_model()
