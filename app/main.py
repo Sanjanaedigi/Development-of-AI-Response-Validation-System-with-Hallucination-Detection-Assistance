@@ -55,7 +55,7 @@ def health():
 def version():
 
     return {
-        "version": "1.0.1",
+        "version": "1.0.2",
         "embedding_backend": EMBEDDING_BACKEND
     }
 
