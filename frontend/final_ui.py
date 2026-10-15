@@ -335,8 +335,9 @@ if "batch_results" not in st.session_state:
 # API CONFIGURATION
 # =========================================================
 
-DEFAULT_API_URL = (
-    "http://127.0.0.1:8000/api/v1/evaluate"
+DEFAULT_API_URL = os.environ.get(
+    "API_URL",
+    "https://development-of-ai-response-validation-sy89.onrender.com/api/v1/evaluate",
 )
 
 API_URL = st.sidebar.text_input(
